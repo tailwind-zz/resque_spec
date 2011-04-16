@@ -1,4 +1,4 @@
-require 'resque_spec/ext'
+require 'resque'
 require 'resque_spec/helpers'
 require 'resque_spec/matchers'
 
@@ -41,6 +41,14 @@ module ResqueSpec
 
   def reset!
     queues.clear
+  end
+  
+  module ::Resque
+    extend self    
+    def enqueue(klass, *args)
+      queue = klass.instance_variable_get(:@queue)      
+      ResqueSpec.enqueue(queue, klass, *args)      
+    end
   end
 
   private
